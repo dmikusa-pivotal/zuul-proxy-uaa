@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <script>
+    function sendTest1() {
+	    $.post({
+    		url: "http://localhost:8080/" + $("#uaaName :selected").val() + "/oauth/token", 
+    		data: {grant_type: "password", username: "admin", password: "deschutes"}, 
+    		username: "opsman", 
+    		password: "", 
+    		dataType: "json"}
+    	).always(function(data, status) { 
+    		var output = "Status: " + status + "\n";
+    		output += "Data:\n";
+    		output += JSON.stringify(data);
+    		$("#test1Output").val(output);
+    	});
+    }
+    </script>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <p>Open Chrome Dev Tools / Firebug and use this page to test.</p>
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js"   
+    		integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="
+    		crossorigin="anonymous"></script>
+    <h1>Tests</h1>
+    <div>
+    	<label>Select a UAA:</label>
+    	<select id="uaaName">
+    		<option value="om">UAA on Ops Manager / Deschutes</option>
+    		<option value="deschutes">UAA on Deschutes</option>
+    		<option value="pws">UAA on PWS</option>
+    	</select>
+    	<br/><br/>
+    	<label>Test login to UAA on Ops Manager / Deschutes:</label>
+    	<button onclick="sendTest1();">Test #1</button>
+    	<br/><br/>
+    	<textarea id="test1Output" style="width: 400px; height: 200px;">
+    		Click Test Button to start the test.
+    	</textarea>
+    </div>
+  </body>
+</html>
