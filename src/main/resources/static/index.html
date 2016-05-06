@@ -73,14 +73,14 @@ var SpinOpts = {
 </nav>
   
   <div class="row">
-  <div class="text-center col-sm-12">
+  <div class="text-center col-sm-6">
     <form id="CreateStoryForm" class="form-horizontal" onSubmit="return false;" >
       <fieldset>
         <!-- Text input-->
         <div class="form-group row">
         <label for="Username" class="col-sm-2 form-control-label">Username</label>
         <div class="col-sm-2">
-          <input type="text" class="form-control" id="Username" placeholder="Patches">
+          <input type="text" class="form-control" id="Username" placeholder="Username">
        </div>
       </div>
 
@@ -93,10 +93,56 @@ var SpinOpts = {
       </div>
 
 
-        <button id="singlebutton" name="singlebutton" class="btn btn-lg btn-warning" onclick="sendTest1();">Get your Horrorscope</button> 
+        <button id="singlebutton" name="singlebutton"
+                class="btn btn-lg btn-warning" onclick="OauthPasswordGrant( $('#Username').val(), $('#Password').val() );">
+          Validate</button>
       </fieldset>
     </form>
   </div> <!-- end column -->
+
+    <div class="text-center col-sm-6">
+      <form id="CreateStoryForm" class="form-horizontal" onSubmit="return false;" >
+        <fieldset>
+          <!-- Text input-->
+          <div class="form-group row">
+            <label for="Username" class="col-sm-2 form-control-label">Client</label>
+            <div class="col-sm-2">
+              <input type="text" class="form-control" id="clientid" placeholder="ClientID">
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group row">
+            <label for="Password" class="col-sm-2 form-control-label">Client Screte</label>
+            <div class="col-sm-2">
+              <input type="password" class="form-control" id="clientscrete">
+            </div>
+          </div>
+          <!-- Text input-->
+          <div class="form-group row">
+            <label for="Username" class="col-sm-2 form-control-label">Username</label>
+            <div class="col-sm-2">
+              <input type="text" class="form-control" id="Username" placeholder="Username">
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group row">
+            <label for="Password" class="col-sm-2 form-control-label">Password</label>
+            <div class="col-sm-2">
+              <input type="password" class="form-control" id="Password" placeholder="Password">
+            </div>
+          </div>
+
+
+          <button id="singlebutton" name="singlebutton"
+                  class="btn btn-lg btn-warning" onclick="OauthPasswordGrant( $('#Username').val(), $('#Password').val() );">
+            Validate</button>
+        </fieldset>
+      </form>
+    </div> <!-- end column -->
+
+
   </div> <!-- end row -->
 
 <hr>
@@ -107,29 +153,9 @@ var SpinOpts = {
   </div> <!-- end column -->
   </div> <!-- end row -->
 
-<div  style="position:fixed;top:50%;left:50%" id="SubmitSpinner"></div>
 
 
-    <h1>Hello World!</h1>
-    <p>Open Chrome Dev Tools / Firebug and use this page to test.</p>
-    <script src="https://code.jquery.com/jquery-2.2.3.min.js"   
-    		integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="
-    		crossorigin="anonymous"></script>
-    <h1>Tests</h1>
-    <div>
-    	<label>Select a UAA:</label>
-    	<select id="uaaName">
-    		<option value="om">UAA on Ops Manager / Deschutes</option>
-    		<option value="deschutes">UAA on Deschutes</option>
-    		<option value="pws">UAA on PWS</option>
-    	</select>
-    	<br/><br/>
-    	<label>Test login to UAA on Ops Manager / Deschutes:</label>
-    	<button onclick="sendTest1();">Test #1</button>
-    	<br/><br/>
-    	<textarea id="test1Output" style="width: 400px; height: 200px;">
-    		Click Test Button to start the test.
-    	</textarea>
-    </div>
+
+
   </body>
 </html>

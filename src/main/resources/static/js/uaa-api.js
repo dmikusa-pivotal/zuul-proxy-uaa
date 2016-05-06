@@ -1,7 +1,9 @@
 
 
 BASEURL = "https://uaa-mgr.cfapps.io";
-UAAURL = "";
+
+UAAURL = "http://localhost:8080/om";
+
 var CheckUAATokenURL = UAAURL+"/check_id";
 var CheckUAATokenURL = UAAURL+"/check_token";
 var OauthAuthorizeURL = UAAURL+"/oauth/authorize";
@@ -14,58 +16,46 @@ function GetScopes(){
 
 
 function OauthPasswordGrant(user, pass) {
-	var url = OauthTokenURL + "?grant_type=password&response_type=token&username=" + user + "&password=" + pass;
 
-	$.ajax({
-    url: url,
-    type: 'post',
-    dataType: 'json',
-    success: function (data) {
+	//var url = OauthTokenURL + "?grant_type=password&response_type=token&username=" + user + "&password=" + pass;
 
-    /*
-    {
-  		"access_token":"2YotnFZFEjr1zCsicMWpAA",
-  		"token_type":"bearer",
-		"expires_in":3600
-	}
-	*/
-	CheckToken(data.access_token);
-    },
-    error: function(data) {
-    	//TODO parse URL param error=
-      alert('Error during Oauth2 Authorization ' + JSON.stringify(data));
-    }
-   });
+
+    console.log(user);
+    console.log(pass);
+	 $.post({
+        		url: OauthTokenURL ,
+        		data: {grant_type: "password", username: user, password: pass},
+        		username: "opsman",
+        		password: "",
+        		dataType: "json"}
+        	).always(function(data, status) {
+        	       console.log(data);
+        		//var output = "Status: " + status + "\n";
+        		//output += "Data:\n";
+        		//output += JSON.stringify(data);
+        		//$("#test1Output").val(output);
+        		CheckToken(data.access_token);
+        	});
+
+
 }
 
 function CheckToken(token) {
 	var url = CheckUAATokenURL + "?token=" + token;
-	$.ajax({
-    url: url,
-    type: 'post',
-    dataType: 'json',
-    success: function (data) {
 
-    /*
- {
-    "jti":"4657c1a8-b2d0-4304-b1fe-7bdc203d944f",
-    "aud":["openid","cloud_controller"],
-    "scope":["read"],
-    "email":"marissa@test.org",
-    "exp":138943173,
-    "user_id":"41750ae1-b2d0-4304-b1fe-7bdc24256387",
-    "user_name":"marissa",
-    "client_id":"cf"
-}
-	*/
-	$('#ScopeInfo').html(  JSON.stringify(data.scope));
 
-    },
-    error: function(data) {
-    	//TODO parse URL param error=
-      alert('Error during Oauth2 Authorization');
-    }
-   });
+
+     $.post({
+           		url: CheckUAATokenURL ,
+           		data: { token: token},
+           		username: "opsman",
+           		password: "",
+           		dataType: "json"}
+           	).always(function(data, status) {
+           	       console.log(data);
+           	       $('#ScopeInfo').html(  JSON.stringify(data.scope));
+
+           	});
 }
 
 
