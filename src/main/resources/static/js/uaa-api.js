@@ -40,6 +40,24 @@ function OauthPasswordGrant(user, pass) {
 
 }
 
+function OauthClientCredsGrant(client, secret, scopes, whenDone) {
+	var data = {
+		grant_type: "client_credentials"
+	}
+	if (scopes) {
+		data.scopes = scopes.join(' ');
+	}
+	$.post({
+		url: OauthTokenURL,
+		data: data,
+		username: client,
+		password: secret,
+		dataType: "json"
+	}).done(whenDone).fail(function(data) {
+		console.error("Failed: " + data);  // TODO: better error handling
+	});
+}
+
 function CheckToken(token) {
 	var url = CheckUAATokenURL + "?token=" + token;
 
