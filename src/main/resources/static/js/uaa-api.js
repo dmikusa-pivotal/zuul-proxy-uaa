@@ -2,18 +2,39 @@
 
 BASEURL = "https://uaa-mgr.cfapps.io";
 
-UAAURL = "http://localhost:8080/om";
+UAAURL = "http://localhost:8080";
 
-var CheckUAATokenURL = UAAURL+"/check_id";
-var CheckUAATokenURL = UAAURL+"/check_token";
-var OauthAuthorizeURL = UAAURL+"/oauth/authorize";
-var OauthTokenURL = UAAURL+"/oauth/token";
+var CheckUAATokenEndpoint = "check_id";
+var CheckUAATokenEndpoint = "check_token";
+var OauthAuthorizeEndpoint = "oauth/authorize";
+var OauthTokenEndpoint = "oauth/token";
+var UserInfoEndpoint = "userinfo";
+var UAAServersEndpoint = UAAURL + "/api/v1/uaa_servers";
 
+var GlobalUAAServers = {};
 
 function GetScopes(){
 	OauthAuthorizeGrant();
 }
 
+function GetUAAServers(){
+        console.log(UAAServersEndpoint);
+
+        $.get( UAAServersEndpoint, function( data ) {
+          $( ".result" ).html( data );
+              console.log(data);
+               var selectHtml = "";
+               for (var key in data) {
+                 if (data.hasOwnProperty(key)) {
+                    GlobalUAAServers[data[key][1]] = data[key][0];
+                   selectHtml += "<option>"+ data[key][1] + "</option>";
+                 }
+               }
+               $('#UAAServers').html(selectHtml);
+        });
+
+
+}
 
 function OauthPasswordGrant(user, pass) {
 
@@ -21,42 +42,86 @@ function OauthPasswordGrant(user, pass) {
 
 
     console.log(user);
-    console.log(pass);
-	 $.post({
-        		url: OauthTokenURL ,
+    console.log(UAAURL + $('#UAAServers').val() + OauthTokenEndpoint );
+    var uaaurl = UAAURL +  GlobalUAAServers[ $('#UAAServers').val() ] + OauthTokenEndpoint + "";
+
+
+
+        $.post({
+        		url: uaaurl ,
         		data: {grant_type: "password", username: user, password: pass},
         		username: "opsman",
         		password: "",
         		dataType: "json"}
         	).always(function(data, status) {
         	       console.log(data);
-        		//var output = "Status: " + status + "\n";
-        		//output += "Data:\n";
-        		//output += JSON.stringify(data);
-        		//$("#test1Output").val(output);
+
         		CheckToken(data.access_token);
+        	//	GetUserInformation(data.access_token);
+
         	});
 
 
 }
 
 function CheckToken(token) {
-	var url = CheckUAATokenURL + "?token=" + token;
+
 
 
 
      $.post({
-           		url: CheckUAATokenURL ,
+           		url: UAAURL + GlobalUAAServers[ $('#UAAServers').val() ] + CheckUAATokenEndpoint ,
            		data: { token: token},
            		username: "opsman",
            		password: "",
            		dataType: "json"}
            	).always(function(data, status) {
            	       console.log(data);
-           	       $('#ScopeInfo').html(  JSON.stringify(data.scope));
+           	     //  $('#ScopeInfo').html(  JSON.stringify(data.scope));
+           	        GetTokenHTML('ScopeInfo', data);
 
            	});
 }
 
 
+function GetUserInformation(token) {
 
+
+     $.get({
+           		url: UAAURL + $('#UAAServers').val() + UserInfoEndpoint ,
+           		data: { token: token},
+           		username: "opsman",
+           		password: "",
+           		dataType: "json"}
+           	).always(function(data, status) {
+           	       console.log(data);
+           	      // $('#ScopeInfo').html(  JSON.stringify(data.scope));
+                GetTokenHTML('UserInfo', data);
+           	});
+}
+
+/*
+{
+    "jti":"4657c1a8-b2d0-4304-b1fe-7bdc203d944f",
+    "aud":["openid","cloud_controller"],
+    "scope":["read"],
+    "email":"marissa@test.org",
+    "exp":138943173,
+    "user_id":"41750ae1-b2d0-4304-b1fe-7bdc24256387",
+    "user_name":"marissa",
+    "client_id":"cf"
+}
+*/
+function GetTokenHTML(id, data) {
+
+    var tableHTML = "<table class='table uaainfotable'>";
+    for (var key in data) {
+        if ( data.hasOwnProperty(key) ) {
+            tableHTML += "<tr><td>" + key + "</td><td>" + data[key] + "</td></tr>";
+        }
+    }
+    tableHTML += "</table>";
+    $('#' + id).html(tableHTML);
+	//$.jsontotable(data, { id: "#"+ id, header: false });
+
+}
