@@ -1,0 +1,6 @@
+applications:
+  - name: uaa-manager
+    buildpack: java_buildpack
+    path: target/zuul-proxy-uaa-0.0.1-SNAPSHOT.jar
+    host: uaamanager
+    memory: 1GB
