@@ -2,14 +2,14 @@
 
 BASEURL = "https://uaa-mgr.cfapps.io";
 
-UAAURL = "http://localhost:8080";
+//UAAURL = "http://localhost:8080";
 
 var CheckUAATokenEndpoint = "check_id";
 var CheckUAATokenEndpoint = "check_token";
 var OauthAuthorizeEndpoint = "oauth/authorize";
 var OauthTokenEndpoint = "oauth/token";
 var UserInfoEndpoint = "userinfo";
-var UAAServersEndpoint = UAAURL + "/api/v1/uaa_servers";
+var UAAServersEndpoint = "/api/v1/uaa_servers";
 
 var GlobalUAAServers = {};
 
@@ -42,8 +42,8 @@ function OauthPasswordGrant(user, pass) {
 
 
     console.log(user);
-    console.log(UAAURL + $('#UAAServers').val() + OauthTokenEndpoint );
-    var uaaurl = UAAURL +  GlobalUAAServers[ $('#UAAServers').val() ] + OauthTokenEndpoint + "";
+    console.log( $('#UAAServers').val() + OauthTokenEndpoint );
+    var uaaurl = GlobalUAAServers[ $('#UAAServers').val() ] + OauthTokenEndpoint + "";
 
 
 
@@ -88,7 +88,7 @@ function CheckToken(token) {
 
 
      $.post({
-           		url: UAAURL + GlobalUAAServers[ $('#UAAServers').val() ] + CheckUAATokenEndpoint ,
+           		url: GlobalUAAServers[ $('#UAAServers').val() ] + CheckUAATokenEndpoint ,
            		data: { token: token},
            		username: "opsman",
            		password: "",
@@ -106,7 +106,7 @@ function GetUserInformation(token) {
 
 
      $.get({
-           		url: UAAURL + $('#UAAServers').val() + UserInfoEndpoint ,
+           		url: $('#UAAServers').val() + UserInfoEndpoint ,
            		data: { token: token},
            		username: "opsman",
            		password: "",
