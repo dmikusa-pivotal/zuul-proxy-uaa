@@ -1,7 +1,6 @@
 
 
 BASEURL = "https://uaa-mgr.cfapps.io";
-
 //UAAURL = "http://localhost:8080";
 
 var CheckUAATokenEndpoint = "check_id";
@@ -18,53 +17,40 @@ function GetScopes(){
 }
 
 function GetUAAServers(){
-        console.log(UAAServersEndpoint);
+    console.log(UAAServersEndpoint);
 
-        $.get( UAAServersEndpoint, function( data ) {
-          $( ".result" ).html( data );
-              console.log(data);
-               var selectHtml = "";
-               for (var key in data) {
-                 if (data.hasOwnProperty(key)) {
-                    GlobalUAAServers[data[key][1]] = data[key][0];
-                   selectHtml += "<option>"+ data[key][1] + "</option>";
-                 }
-               }
-               $('#UAAServers').html(selectHtml);
-        });
-
-
+	$.get( UAAServersEndpoint, function( data ) {
+	  $( ".result" ).html( data );
+	  console.log(data);
+	   var selectHtml = "";
+	   for (var key in data) {
+	     if (data.hasOwnProperty(key)) {
+	        GlobalUAAServers[data[key][1]] = data[key][0];
+	       selectHtml += "<option>"+ data[key][1] + "</option>";
+	     }
+	   }
+	   $('#UAAServers').html(selectHtml);
+	});
 }
 
 function OauthPasswordGrant(user, pass) {
-
-	//var url = OauthTokenURL + "?grant_type=password&response_type=token&username=" + user + "&password=" + pass;
-
-
-    console.log(user);
-    console.log( $('#UAAServers').val() + OauthTokenEndpoint );
     var uaaurl = GlobalUAAServers[ $('#UAAServers').val() ] + OauthTokenEndpoint + "";
-
-
-
-        $.post({
-        		url: uaaurl ,
-        		data: {grant_type: "password", username: user, password: pass},
-        		username: "opsman",
-        		password: "",
-        		dataType: "json"}
-        	).always(function(data, status) {
-        	       console.log(data);
-
-        		CheckToken(data.access_token);
-        	//	GetUserInformation(data.access_token);
-
-        	});
-
-
+    console.log("UAA URL: " + uaaurl);
+    $.post({
+    		url: uaaurl ,
+    		data: {grant_type: "password", username: user, password: pass},
+    		username: "cf", // use `opsman` for Ops Manager
+    		password: "",
+    		dataType: "json"}
+    	).always(function(data, status) {
+    	    console.log(data);
+    		//CheckToken(data.access_token);
+    	    GetUserInformation(data.access_token);
+    	});
 }
 
 function OauthClientCredsGrant(client, secret, scopes, whenDone) {
+	var uaaurl = GlobalUAAServers[ $('#UAAServers').val() ] + OauthTokenEndpoint + "";
 	var data = {
 		grant_type: "client_credentials"
 	}
@@ -72,7 +58,7 @@ function OauthClientCredsGrant(client, secret, scopes, whenDone) {
 		data.scopes = scopes.join(' ');
 	}
 	$.post({
-		url: OauthTokenURL,
+		url: uaaurl,
 		data: data,
 		username: client,
 		password: secret,
@@ -82,40 +68,33 @@ function OauthClientCredsGrant(client, secret, scopes, whenDone) {
 	});
 }
 
-function CheckToken(token) {
-
-
-
-
+function CheckToken(client, secret, token) { // needs to be have uaa.resource scope
      $.post({
-           		url: GlobalUAAServers[ $('#UAAServers').val() ] + CheckUAATokenEndpoint ,
-           		data: { token: token},
-           		username: "opsman",
-           		password: "",
-           		dataType: "json"}
-           	).always(function(data, status) {
-           	       console.log(data);
-           	     //  $('#ScopeInfo').html(  JSON.stringify(data.scope));
-           	        GetTokenHTML('ScopeInfo', data);
-
-           	});
+       		url: GlobalUAAServers[ $('#UAAServers').val() ] + CheckUAATokenEndpoint ,
+       		data: { token: token},
+       		username: client,
+       		password: secret,
+       		dataType: "json"}
+       	).always(function(data, status) {
+       	    console.log(data);
+       	    //  $('#ScopeInfo').html(  JSON.stringify(data.scope));
+       		GetTokenHTML('ScopeInfo', data);
+       	});
 }
 
 
 function GetUserInformation(token) {
-
-
      $.get({
-           		url: $('#UAAServers').val() + UserInfoEndpoint ,
-           		data: { token: token},
-           		username: "opsman",
-           		password: "",
-           		dataType: "json"}
-           	).always(function(data, status) {
-           	       console.log(data);
-           	      // $('#ScopeInfo').html(  JSON.stringify(data.scope));
-                GetTokenHTML('UserInfo', data);
-           	});
+	   		url: $('#UAAServers').val() + UserInfoEndpoint,
+	   		headers: {
+	   			'Authorization': 'bearer ' + token
+	   		},
+	   		dataType: "json"}
+	   	).always(function(data, status) {
+	   	       console.log(data);
+	   	      // $('#ScopeInfo').html(  JSON.stringify(data.scope));
+	        GetTokenHTML('UserInfo', data);
+	   	});
 }
 
 /*

@@ -136,30 +136,14 @@ var SpinOpts = {
 
           <!-- Text input-->
           <div class="form-group row">
-            <label for="Password" class="col-sm-2 form-control-label">Client Screte</label>
+            <label for="Password" class="col-sm-2 form-control-label">Client Secret</label>
             <div class="col-sm-2">
-              <input type="password" class="form-control" id="clientscrete">
+              <input type="password" class="form-control" id="clientsecret">
             </div>
           </div>
-          <!-- Text input-->
-          <div class="form-group row">
-            <label for="Username" class="col-sm-2 form-control-label">Username</label>
-            <div class="col-sm-2">
-              <input type="text" class="form-control" id="Username" placeholder="Username">
-            </div>
-          </div>
-
-          <!-- Text input-->
-          <div class="form-group row">
-            <label for="Password" class="col-sm-2 form-control-label">Password</label>
-            <div class="col-sm-2">
-              <input type="password" class="form-control" id="Password" placeholder="Password">
-            </div>
-          </div>
-
 
           <button id="singlebutton" name="singlebutton"
-                  class="btn btn-lg btn-warning" onclick="OauthPasswordGrant( $('#Username').val(), $('#Password').val() );">
+                  class="btn btn-lg btn-warning" onclick="OauthClientCredsGrant($('#clientid').val(), $('#clientsecret').val(), ['resource.uaa'], function(data) { CheckToken($('#clientid').val(), $('#clientsecret').val(), data.access_token); });">
             Validate</button>
         </fieldset>
       </form>
