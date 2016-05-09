@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>UAA Manager</title>
+  <link href="img/logo.ico" name="favicon" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/uaa.css">
+  <script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
+
+  <script type="text/javascript" src="js/spin.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/uaa-api.js"></script>
+    <script>
+
+
+var SpinOpts = {
+  lines: 13, // The number of lines to draw
+  length: 20, // The length of each line
+  width: 10, // The line thickness
+  radius: 30, // The radius of the inner circle
+  corners: 1, // Corner roundness (0..1)
+  rotate: 0, // The rotation offset
+  direction: 1, // 1: clockwise, -1: counterclockwise
+  color: '#000', // #rgb or #rrggbb or array of colors
+  speed: 1, // Rounds per second
+  trail: 60, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: '50%', // Top position relative to parent
+  left: '50%' // Left position relative to parent
+};
+
+    function sendTest1() {
+	    $.post({
+    		url: "http://localhost:8080/" + $("#uaaName :selected").val() + "/oauth/token",
+    		data: {grant_type: "password", username: "admin", password: "deschutes"},
+    		username: "opsman",
+    		password: "",
+    		dataType: "json"}
+    	).always(function(data, status) {
+    		var output = "Status: " + status + "\n";
+    		output += "Data:\n";
+    		output += JSON.stringify(data);
+    		$("#test1Output").val(output);
+    	});
+    }
+    </script>
+  </head>
+  <body onload="GetUAAServers();">
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"><img src="img/logo.ico"></img></a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="#" target="_blank">Help</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="row">
+  <div class="text-center col-sm-6">
+
+    <form class="form-horizontal" onSubmit="return false;" >
+      <fieldset>
+    <!-- Select input-->
+    <div class="form-group row">
+      <label for="UAAServers" class="col-sm-2 form-control-label">UAA Servers</label>
+      <div class="col-sm-10">
+        <select id="UAAServers" name="UAAServers" class="input-xlarge">
+
+        </select>
+        <a href="#" data-toggle="tooltip" data-placement="bottom" data-original-title="We need to hide identity information for SP Customers">(?)</a>
+      </div>
+    </div>
+    </fieldset>
+      </form>
+    </div> <!-- end column -->
+  </div> <!-- end row -->
+    <hr>
+
+  <div class="row">
+  <div class="text-center col-sm-6">
+    <form id="CreateStoryForm" class="form-horizontal" onSubmit="return false;" >
+      <fieldset>
+        <!-- Text input-->
+        <div class="form-group row">
+        <label for="Username" class="col-sm-2 form-control-label">Username</label>
+        <div class="col-sm-2">
+          <input type="text" class="form-control" id="Username" placeholder="Username">
+       </div>
+      </div>
+
+      <!-- Text input-->
+        <div class="form-group row">
+        <label for="Password" class="col-sm-2 form-control-label">Password</label>
+        <div class="col-sm-2">
+          <input type="password" class="form-control" id="Password">
+       </div>
+      </div>
+
+
+        <button id="singlebutton" name="singlebutton"
+                class="btn btn-lg btn-warning" onclick="OauthPasswordGrant( $('#Username').val(), $('#Password').val() );">
+          Validate</button>
+      </fieldset>
+    </form>
+  </div> <!-- end column -->
+
+    <div class="text-center col-sm-6">
+      <form id="CreateStoryForm" class="form-horizontal" onSubmit="return false;" >
+        <fieldset>
+          <!-- Text input-->
+          <div class="form-group row">
+            <label for="Username" class="col-sm-2 form-control-label">Client</label>
+            <div class="col-sm-2">
+              <input type="text" class="form-control" id="clientid" placeholder="ClientID">
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group row">
+            <label for="Password" class="col-sm-2 form-control-label">Client Screte</label>
+            <div class="col-sm-2">
+              <input type="password" class="form-control" id="clientscrete">
+            </div>
+          </div>
+          <!-- Text input-->
+          <div class="form-group row">
+            <label for="Username" class="col-sm-2 form-control-label">Username</label>
+            <div class="col-sm-2">
+              <input type="text" class="form-control" id="Username" placeholder="Username">
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group row">
+            <label for="Password" class="col-sm-2 form-control-label">Password</label>
+            <div class="col-sm-2">
+              <input type="password" class="form-control" id="Password" placeholder="Password">
+            </div>
+          </div>
+
+
+          <button id="singlebutton" name="singlebutton"
+                  class="btn btn-lg btn-warning" onclick="OauthClientCredsGrant($('#clientid').val(), $('#clientsecret').val(), ['resource.uaa'], function(data) { CheckToken($('#clientid').val(), $('#clientsecret').val(), data.access_token); });">
+            Validate</button>
+        </fieldset>
+      </form>
+    </div> <!-- end column -->
+
+
+  </div> <!-- end row -->
+
+<hr>
+
+ <div class="row">
+  <div class="text-center col-sm-6">
+  <div id="ScopeInfo"></div>
+  </div> <!-- end column -->
+
+   <div class="text-center col-sm-6">
+     <div id="UserInfo"></div>
+   </div> <!-- end column -->
+
+  </div> <!-- end row -->
+
+
+
+
+
+  </body>
+</html>
